@@ -16,7 +16,10 @@ def auth_app(db, monkeypatch):
     app = create_app(db=db)
     app.config["TESTING"] = True
     app.config["WTF_CSRF_ENABLED"] = False
-    return app
+    yield app
+    # 恢复 settings 状态，避免影响其他测试
+    monkeypatch.delenv("ADMIN_PASSWORD", raising=False)
+    importlib.reload(settings)
 
 
 @pytest.fixture

@@ -2,16 +2,7 @@
 
 import logging
 from flask import Blueprint, render_template, request, session, redirect, url_for
-from config.settings import (
-    TOPHUB_BASE_URL,
-    TOPHUB_API_KEY,
-    MINIMAX_MODEL,
-    DEFAULT_STYLE,
-    MAX_TOPICS_PER_RUN,
-    DB_PATH,
-    RSS_BASE_URL,
-    ADMIN_PASSWORD,
-)
+from config import settings
 
 logger = logging.getLogger(__name__)
 
@@ -24,6 +15,8 @@ def create_web_bp(db):
     def require_auth():
         if request.endpoint in ("web.login", "web.static", None):
             return None
+        if not settings.ADMIN_PASSWORD:
+            return None
         if not session.get("authenticated"):
             return redirect(url_for("web.login"))
 
@@ -33,7 +26,7 @@ def create_web_bp(db):
             return render_template("login.html", error=None)
 
         password = request.form.get("password", "")
-        if password == ADMIN_PASSWORD:
+        if password == settings.ADMIN_PASSWORD:
             session["authenticated"] = True
             return redirect(url_for("web.dashboard"))
         return render_template("login.html", error="密码错误"), 401
@@ -81,13 +74,13 @@ def create_web_bp(db):
     @bp.route("/settings")
     def settings_page():
         config_values = {
-            "TOPHUB_BASE_URL": TOPHUB_BASE_URL,
-            "TOPHUB_API_KEY": "***" if TOPHUB_API_KEY else "(未设置)",
-            "MINIMAX_MODEL": MINIMAX_MODEL,
-            "DEFAULT_STYLE": DEFAULT_STYLE,
-            "MAX_TOPICS_PER_RUN": MAX_TOPICS_PER_RUN,
-            "DB_PATH": DB_PATH,
-            "RSS_BASE_URL": RSS_BASE_URL,
+            "TOPHUB_BASE_URL": settings.TOPHUB_BASE_URL,
+            "TOPHUB_API_KEY": "***" if settings.TOPHUB_API_KEY else "(未设置)",
+            "MINIMAX_MODEL": settings.MINIMAX_MODEL,
+            "DEFAULT_STYLE": settings.DEFAULT_STYLE,
+            "MAX_TOPICS_PER_RUN": settings.MAX_TOPICS_PER_RUN,
+            "DB_PATH": settings.DB_PATH,
+            "RSS_BASE_URL": settings.RSS_BASE_URL,
         }
         return render_template("settings.html", config=config_values)
 
