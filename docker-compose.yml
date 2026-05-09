@@ -1,0 +1,8 @@
+version: "3.8"
+services:
+  dailyhot:
+    image: imsyy/dailyhot-api:latest
+    container_name: dailyhot-api
+    ports:
+      - "6688:6688"
+    restart: unless-stopped

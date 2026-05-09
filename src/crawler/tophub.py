@@ -4,6 +4,8 @@ import requests
 import logging
 
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception, before_sleep_log
+from src.crawler.models import HotTopic
+from src.crawler import register_crawler
 
 logger = logging.getLogger(__name__)
 
@@ -40,7 +42,7 @@ HEADERS = {
 
 class DouyinCrawler:
     @crawl_retry
-    def get_hot_list(self):
+    def get_hot_list(self) -> list[HotTopic]:
         """获取抖音热搜榜
 
         网络异常（RequestException）由 tenacity 重试装饰器处理，
@@ -53,10 +55,14 @@ class DouyinCrawler:
         word_list = data.get("data", {}).get("word_list", [])
         results = []
         for item in word_list:
-            results.append({
-                "title": item.get("word", ""),
-                "url": f"https://www.douyin.com/search/{item.get('word', '')}",
-                "hot_value": str(item.get("hot_value", 0)),
-                "category": "抖音热搜",
-            })
+            results.append(HotTopic(
+                title=item.get("word", ""),
+                url=f"https://www.douyin.com/search/{item.get('word', '')}",
+                source="douyin",
+                hot_value=str(item.get("hot_value", 0)),
+                category="抖音热搜",
+            ))
         return results
+
+
+register_crawler(DouyinCrawler())

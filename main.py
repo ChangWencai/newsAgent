@@ -14,6 +14,12 @@ from config.settings import RSS_HOST, RSS_PORT, DB_PATH
 from src.storage.database import Database
 from src.scheduler.jobs import run_pipeline
 
+# 导入爬虫模块触发自动注册
+import src.crawler.tophub  # noqa: F401
+import src.crawler.weibo  # noqa: F401
+import src.crawler.zhihu  # noqa: F401
+import src.crawler.baidu  # noqa: F401
+
 csrf = CSRFProtect()
 
 logging.basicConfig(

@@ -25,6 +25,9 @@ RSS_BASE_URL = os.getenv("RSS_BASE_URL", "http://localhost:5000")
 DEFAULT_STYLE = os.getenv("DEFAULT_STYLE", "auto")
 MAX_TOPICS_PER_RUN = int(os.getenv("MAX_TOPICS_PER_RUN", "5"))
 
+# DailyHotApi 服务
+DAILYHOT_BASE_URL = os.getenv("DAILYHOT_BASE_URL", "https://api-hot.imsyy.top")
+
 # 数据库
 DB_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "newsagent.db")
 

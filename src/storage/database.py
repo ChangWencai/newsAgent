@@ -37,6 +37,7 @@ class Database:
                 url TEXT,
                 hot_value TEXT,
                 category TEXT,
+                source TEXT DEFAULT '',
                 fetched_at TEXT NOT NULL,
                 status TEXT DEFAULT 'pending'
             );
@@ -62,6 +63,11 @@ class Database:
                 updated_at TEXT NOT NULL
             );
         """)
+        # 兼容已有数据库：添加 source 列
+        try:
+            self._execute_write("ALTER TABLE hot_topics ADD COLUMN source TEXT DEFAULT ''")
+        except Exception:
+            pass
         self._conn.commit()
 
     def topic_exists(self, title):
@@ -70,11 +76,11 @@ class Database:
         ).fetchone()
         return row is not None
 
-    def insert_topic(self, title, url="", hot_value="", category=""):
+    def insert_topic(self, title, url="", hot_value="", category="", source=""):
         now = datetime.now().isoformat()
         cursor = self._execute_write(
-            "INSERT INTO hot_topics (title, url, hot_value, category, fetched_at) VALUES (?, ?, ?, ?, ?)",
-            (title, url, hot_value, category, now)
+            "INSERT INTO hot_topics (title, url, hot_value, category, source, fetched_at) VALUES (?, ?, ?, ?, ?, ?)",
+            (title, url, hot_value, category, source, now)
         )
         return cursor.lastrowid
 
