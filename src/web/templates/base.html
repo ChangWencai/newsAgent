@@ -65,6 +65,10 @@
         {% block content %}{% endblock %}
     </div>
     <div id="toast" class="toast"></div>
+    <div id="cookie-banner" style="display:none; position:fixed; top:0; left:0; right:0; background:#c62828; color:#fff; padding:12px 24px; z-index:1000; text-align:center;">
+        Cookie 已过期，请<a href="/login" style="color:#fff; text-decoration:underline;">重新登录</a>
+        <button onclick="this.parentElement.style.display='none'" style="float:right; background:none; border:1px solid #fff; color:#fff; cursor:pointer; padding:2px 8px;">关闭</button>
+    </div>
     <script>
         function showToast(msg, type='success') {
             const t = document.getElementById('toast');
@@ -84,6 +88,17 @@
             } catch(e) { showToast('请求失败', 'error'); }
             btn.disabled = false; btn.textContent = '执行流水线';
         }
+        async function checkCookieStatus() {
+            try {
+                const res = await fetch('/health');
+                const data = await res.json();
+                if (data.cookie_status === 'expired') {
+                    document.getElementById('cookie-banner').style.display = 'block';
+                }
+            } catch(e) {}
+        }
+        setInterval(checkCookieStatus, 300000);
+        checkCookieStatus();
     </script>
 </body>
 </html>

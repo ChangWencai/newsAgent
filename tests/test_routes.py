@@ -104,3 +104,20 @@ class TestHealthRoute:
         assert resp.status_code == 200
         data = resp.get_json()
         assert data["status"] == "ok"
+
+    def test_health_returns_cookie_status(self, client):
+        resp = client.get("/health")
+        data = resp.get_json()
+        assert "cookie_status" in data
+        assert "cookie_updated_at" in data
+
+    def test_health_shows_cookie_expired(self, client, db):
+        db.set_cookie_status("expired")
+        resp = client.get("/health")
+        data = resp.get_json()
+        assert data["cookie_status"] == "expired"
+
+    def test_health_shows_cookie_missing_by_default(self, client):
+        resp = client.get("/health")
+        data = resp.get_json()
+        assert data["cookie_status"] == "missing"

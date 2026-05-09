@@ -40,7 +40,12 @@ def create_api_bp(db):
 
     @bp.route("/health")
     def health():
-        return {"status": "ok"}
+        cookie = db.get_cookie_status()
+        return {
+            "status": "ok",
+            "cookie_status": cookie["status"],
+            "cookie_updated_at": cookie["updated_at"],
+        }
 
     return bp
 

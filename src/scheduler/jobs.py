@@ -20,6 +20,12 @@ def create_pipeline(crawler, writer, db):
 
 def _run_pipeline_inner(crawler, writer, db):
     """执行完整的新闻生产流水线"""
+    # 频率控制检查
+    check = db.can_publish(max_daily=5, min_interval_minutes=30)
+    if not check["allowed"]:
+        logger.info("发布跳过: %s, 下次: %s", check["reason"], check["next_available"])
+        return
+
     logger.info("开始执行新闻生产流水线...")
 
     # 1. 抓取热点

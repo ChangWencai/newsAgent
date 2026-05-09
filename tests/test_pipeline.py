@@ -92,3 +92,19 @@ class TestCreatePipeline:
         articles = db.get_articles()
         assert len(articles) == 1
         assert articles[0]["title"] == "热点2文章"
+
+    def test_pipeline_skips_when_daily_limit_exceeded(self, mock_crawler, mock_writer, db):
+        """达到每日发布上限时 pipeline 自动跳过"""
+        topic_id = db.insert_topic("热点", "", "", "")
+        for i in range(5):
+            article_id = db.insert_article(topic_id, f"文章{i}", "内容", "news")
+            db.mark_published(article_id)
+
+        mock_crawler.get_hot_list.return_value = [
+            {"title": "新热点", "url": "http://1", "hot_value": "100", "category": "测试"},
+        ]
+        pipeline = create_pipeline(mock_crawler, mock_writer, db)
+        pipeline()
+
+        mock_crawler.get_hot_list.assert_not_called()
+        mock_writer.generate_article.assert_not_called()
