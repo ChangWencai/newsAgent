@@ -9,3 +9,17 @@ def db():
     database = Database(':memory:')
     yield database
     database._conn.close()
+
+
+@pytest.fixture
+def app(db):
+    from main import create_app
+
+    app = create_app(db=db)
+    app.config['TESTING'] = True
+    return app
+
+
+@pytest.fixture
+def client(app):
+    return app.test_client()
