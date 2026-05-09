@@ -36,7 +36,7 @@
 **Plans**: 5 plans in 5 waves
 
 Plans:
-- [ ] 01-01-PLAN.md — 测试基础设施（pytest + conftest.py + smoke test）
+- [x] 01-01-PLAN.md — 测试基础设施（pytest + conftest.py + smoke test）
 - [ ] 01-02-PLAN.md — Database 重构（单连接 + Lock + WAL + 补齐 5 个方法）
 - [ ] 01-03-PLAN.md — Application Factory + Blueprint 拆分（create_app + web_bp + api_bp）
 - [ ] 01-04-PLAN.md — Pipeline 构造函数注入（create_pipeline + publish.py 适配）
@@ -105,7 +105,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/5 | Ready to execute | - |
+| 1. Foundation | 1/5 | Executing | - |
 | 2. Safety | 0/8 | Not started | - |
 | 3. Multi-Source | 0/9 | Not started | - |
 | 4. Intelligence | 0/5 | Not started | - |
@@ -121,7 +121,7 @@ Plans:
 | FOUND-02 | Phase 1 | Pending |
 | FOUND-03 | Phase 1 | Pending |
 | FOUND-04 | Phase 1 | Pending |
-| FOUND-05 | Phase 1 | Pending |
+| FOUND-05 | Phase 1 | Done (01-01) |
 | FOUND-06 | Phase 1 | Pending |
 | SAFE-01 | Phase 2 | Pending |
 | SAFE-02 | Phase 2 | Pending |
