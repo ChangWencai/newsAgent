@@ -55,7 +55,14 @@ Plans:
 5. Web 管理界面要求登录，所有 POST 表单携带 CSRF token，未认证请求返回 401
 6. 爬虫和 AI API 调用失败时自动指数退避重试，单次网络波动不导致流水线中断
 
-**Plans**: TBD
+**Plans**: 5 plans in 4 waves
+
+Plans:
+- [ ] 02-01-PLAN.md — API 密钥启动验证 + Web UI 认证 + CSRF 保护（SAFE-04, SAFE-05）
+- [x] 02-02-PLAN.md — 爬虫和 AI API 指数退避重试机制（SAFE-08）
+- [ ] 02-03-PLAN.md — Database 频率控制 + cookie 状态管理 + /health 扩展（SAFE-02, SAFE-03）
+- [ ] 02-04-PLAN.md — DFA 敏感词过滤模块 + pipeline 集成（SAFE-06）
+- [ ] 02-05-PLAN.md — Playwright 反检测 + 语义定位器迁移（SAFE-01, SAFE-07）
 
 ### Phase 3: Multi-Source
 **Goal**: 热点来源从抖音单一平台扩展到微博、知乎、百度，多源自动调度与去重
@@ -105,8 +112,8 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 4/5 | Executing | - |
-| 2. Safety | 0/8 | Not started | - |
+| 1. Foundation | 5/5 | Done | 2026-05-09 |
+| 2. Safety | 1/5 | In Progress | - |
 | 3. Multi-Source | 0/9 | Not started | - |
 | 4. Intelligence | 0/5 | Not started | - |
 | 5. Production | 0/5 | Not started | - |
@@ -123,14 +130,14 @@ Plans:
 | FOUND-04 | Phase 1 | Pending |
 | FOUND-05 | Phase 1 | Done (01-01) |
 | FOUND-06 | Phase 1 | Pending |
-| SAFE-01 | Phase 2 | Pending |
-| SAFE-02 | Phase 2 | Pending |
-| SAFE-03 | Phase 2 | Pending |
-| SAFE-04 | Phase 2 | Pending |
-| SAFE-05 | Phase 2 | Pending |
-| SAFE-06 | Phase 2 | Pending |
-| SAFE-07 | Phase 2 | Pending |
-| SAFE-08 | Phase 2 | Pending |
+| SAFE-01 | Phase 2 | Planned (02-05) |
+| SAFE-02 | Phase 2 | Planned (02-03) |
+| SAFE-03 | Phase 2 | Planned (02-03) |
+| SAFE-04 | Phase 2 | Planned (02-01) |
+| SAFE-05 | Phase 2 | Planned (02-01) |
+| SAFE-06 | Phase 2 | Planned (02-04) |
+| SAFE-07 | Phase 2 | Planned (02-05) |
+| SAFE-08 | Phase 2 | Done (02-02) |
 | MULTI-01 | Phase 3 | Pending |
 | MULTI-02 | Phase 3 | Pending |
 | MULTI-03 | Phase 3 | Pending |
@@ -167,4 +174,4 @@ Phase 1 (Foundation)    — 无依赖，立即开始
 
 ---
 
-*Next command: `/gsd-execute-phase 01-foundation`*
+*Next command: `/gsd-execute-phase 02-safety`*
