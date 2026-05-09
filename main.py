@@ -1,7 +1,9 @@
 """NewsAgent 主入口"""
 
 import argparse
+import atexit
 import logging
+import signal
 import sys
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask import Flask
@@ -65,6 +67,18 @@ def main():
     )
     scheduler.start()
     logger.info("定时任务已启动（每6小时执行一次）")
+
+    # 安全退出：atexit handler
+    atexit.register(lambda: scheduler.shutdown(wait=True))
+
+    # 信号处理
+    def _signal_handler(signum, frame):
+        logger.info("收到信号 %d，正在关闭...", signum)
+        scheduler.shutdown(wait=True)
+        sys.exit(0)
+
+    signal.signal(signal.SIGTERM, _signal_handler)
+    signal.signal(signal.SIGINT, _signal_handler)
 
     # 启动 Web + RSS 服务
     app = create_app(db=db)
