@@ -10,7 +10,7 @@
 
 ## Phases
 
-- [ ] **Phase 1: Foundation** — 消除全局状态，建立分层架构与测试基础设施
+- [x] **Phase 1: Foundation** — 消除全局状态，建立分层架构与测试基础设施
 - [ ] **Phase 2: Safety** — 安全加固与发布策略，扩展前解决账号与合规风险
 - [ ] **Phase 3: Multi-Source** — 多平台热点聚合，统一爬虫协议与去重
 - [ ] **Phase 4: Intelligence** — 智能风格匹配、多角度生成、调度持久化
@@ -40,7 +40,7 @@ Plans:
 - [x] 01-02-PLAN.md — Database 重构（单连接 + Lock + WAL + 补齐 5 个方法）
 - [x] 01-03-PLAN.md — Application Factory + Blueprint 拆分（create_app + web_bp + api_bp）
 - [x] 01-04-PLAN.md — Pipeline 构造函数注入（create_pipeline + publish.py 适配）
-- [ ] 01-05-PLAN.md — gunicorn 部署（gunicorn.conf.py + 信号处理 + 双模式兼容）
+- [x] 01-05-PLAN.md — gunicorn 部署（gunicorn.conf.py + 信号处理 + 双模式兼容）
 
 ### Phase 2: Safety
 **Goal**: 发布行为安全可控，账号风险降到最低，内容合规有保障

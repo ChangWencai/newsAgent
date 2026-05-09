@@ -10,14 +10,14 @@
 
 ```
 Phase: 1 of 5 (Foundation)
-Plan:  4 of 5 (Pipeline 构造函数注入) — DONE
-Status: Executing
-Progress: [██░░░░░░░░░░░░░░░░░░] 12% (4/33 requirements)
+Plan:  5 of 5 (gunicorn 生产部署) — DONE
+Status: Phase Complete
+Progress: [██░░░░░░░░░░░░░░░░░░] 15% (5/33 requirements)
 ```
 
 ## Performance Metrics
 
-- Requirements completed: 3 / 33 (FOUND-01, FOUND-03, FOUND-05)
+- Requirements completed: 4 / 33 (FOUND-01, FOUND-03, FOUND-05, FOUND-06)
 - Phases completed: 0 / 5
 - Test coverage: 40 tests passing (smoke 3 + database 17 + routes 15 + pipeline 5)
 - Last deployment: N/A
@@ -41,7 +41,7 @@ Progress: [██░░░░░░░░░░░░░░░░░░] 12% (4/
 - ~~run_pipeline 内部硬编码实例化~~ → 已解决（01-04：构造函数注入）
 - ~~publish.py 直接 SQL 调用~~ → 已解决（01-04：使用 db.get_article）
 - ~~零测试覆盖，无 CI/CD~~ → 部分解决（40 个测试通过，待 CI/CD）
-- 使用 Werkzeug 开发服务器运行在生产环境
+- ~~使用 Werkzeug 开发服务器运行在生产环境~~ → 已解决（01-05：gunicorn 替代）
 - `styles.py:70` 大小写匹配 bug
 
 ### Phase 1 Blockers
@@ -55,7 +55,8 @@ Progress: [██░░░░░░░░░░░░░░░░░░] 12% (4/
 - **Phase 1 context gathered**: 2026-05-09 — 16 个实现决策已确定（DI、数据库、测试、部署）
 - **Phase 1 planned**: 2026-05-09 — 5 个计划（5 waves），需求覆盖 6/6
 - **Phase 1 plan 04 completed**: 2026-05-09 — Pipeline 构造函数注入，40 个测试全部通过
-- **Next action**: `/gsd-execute-phase 1` — 执行 Foundation 阶段计划（01-05: gunicorn 生产部署）
+- **Phase 1 plan 05 completed**: 2026-05-09 — gunicorn 生产部署，信号处理 + atexit 安全退出
+- **Next action**: Phase 1 全部完成，可进入 Phase 2 (Safety) 或验证阶段
 
 ## Phase Summary
 
