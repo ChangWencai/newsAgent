@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}{{ article.title }} - NewsAgent{% endblock %}
+
+{% block content %}
+<div class="actions">
+    <a href="javascript:history.back()" class="btn btn-primary">返回</a>
+</div>
+
+<div class="article-content">
+    <h1>{{ article.title }}</h1>
+    <div class="meta">
+        <span>
+            {% if article.style == 'news' %}
+                <span class="badge badge-news">新闻资讯</span>
+            {% elif article.style == 'comment' %}
+                <span class="badge badge-comment">评论观点</span>
+            {% elif article.style == 'entertainment' %}
+                <span class="badge badge-entertainment">娱乐八卦</span>
+            {% else %}
+                <span class="badge">{{ article.style }}</span>
+            {% endif %}
+        </span>
+        &nbsp;&middot;&nbsp;
+        <span>
+            {% if article.status == 'draft' %}
+                <span class="badge badge-draft">待发布</span>
+            {% elif article.status == 'published' %}
+                <span class="badge badge-published">已发布</span>
+            {% else %}
+                <span class="badge">{{ article.status }}</span>
+            {% endif %}
+        </span>
+        &nbsp;&middot;&nbsp;
+        <span>生成于 {{ article.generated_at[:16] }}</span>
+        {% if article.published_at %}
+            &nbsp;&middot;&nbsp;
+            <span>发布于 {{ article.published_at[:16] }}</span>
+        {% endif %}
+    </div>
+    <div>
+        {% for paragraph in article.content.split('\n') %}
+            {% if paragraph.strip() %}
+                <p>{{ paragraph }}</p>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

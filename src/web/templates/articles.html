@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}文章管理 - NewsAgent{% endblock %}
+
+{% block content %}
+<div class="actions">
+    <a href="/articles?status=all"
+       class="btn btn-sm {% if current_status == 'all' %}btn-primary{% else %}btn-success{% endif %}">
+        全部
+    </a>
+    <a href="/articles?status=draft"
+       class="btn btn-sm {% if current_status == 'draft' %}btn-primary{% else %}btn-success{% endif %}">
+        待发布
+    </a>
+    <a href="/articles?status=published"
+       class="btn btn-sm {% if current_status == 'published' %}btn-primary{% else %}btn-success{% endif %}">
+        已发布
+    </a>
+</div>
+
+<div class="panel">
+    <div class="panel-header">
+        <h2>文章列表</h2>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>标题</th>
+                <th>风格</th>
+                <th>状态</th>
+                <th>生成时间</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for a in articles %}
+            <tr>
+                <td>{{ a.id }}</td>
+                <td>{{ a.title }}</td>
+                <td>
+                    {% if a.style == 'news' %}
+                        <span class="badge badge-news">新闻资讯</span>
+                    {% elif a.style == 'comment' %}
+                        <span class="badge badge-comment">评论观点</span>
+                    {% elif a.style == 'entertainment' %}
+                        <span class="badge badge-entertainment">娱乐八卦</span>
+                    {% else %}
+                        <span class="badge">{{ a.style }}</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if a.status == 'draft' %}
+                        <span class="badge badge-draft">待发布</span>
+                    {% elif a.status == 'published' %}
+                        <span class="badge badge-published">已发布</span>
+                    {% else %}
+                        <span class="badge">{{ a.status }}</span>
+                    {% endif %}
+                </td>
+                <td>{{ a.generated_at[:16] }}</td>
+                <td class="actions">
+                    <a href="/article/{{ a.id }}" class="btn btn-sm btn-primary">查看</a>
+                    <button class="btn btn-sm btn-danger" onclick="deleteArticle({{ a.id }})">删除</button>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="6" style="text-align:center; color:#888;">暂无文章</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+async function deleteArticle(id) {
+    if (!confirm('确定要删除这篇文章吗？')) return;
+    try {
+        const res = await fetch('/api/article/' + id + '/delete', { method: 'POST' });
+        const data = await res.json();
+        showToast(data.message, data.success ? 'success' : 'error');
+        if (data.success) setTimeout(() => location.reload(), 1000);
+    } catch (e) {
+        showToast('删除失败', 'error');
+    }
+}
+</script>
+{% endblock %}

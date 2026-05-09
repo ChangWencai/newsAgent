@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}仪表盘 - NewsAgent{% endblock %}
+
+{% block content %}
+<div class="actions">
+    <button id="runBtn" class="btn btn-primary" onclick="runPipeline()">执行流水线</button>
+</div>
+
+<div class="cards">
+    <div class="card">
+        <div class="num">{{ topic_count }}</div>
+        <div class="label">热点话题</div>
+    </div>
+    <div class="card">
+        <div class="num">{{ article_count }}</div>
+        <div class="label">文章总数</div>
+    </div>
+    <div class="card">
+        <div class="num">{{ draft_count }}</div>
+        <div class="label">待发布</div>
+    </div>
+    <div class="card">
+        <div class="num">{{ published_count }}</div>
+        <div class="label">已发布</div>
+    </div>
+</div>
+
+<div class="panel">
+    <div class="panel-header">
+        <h2>最近文章</h2>
+        <a href="/articles" class="btn btn-sm btn-primary">查看全部</a>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>标题</th>
+                <th>风格</th>
+                <th>状态</th>
+                <th>生成时间</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for a in recent_articles %}
+            <tr>
+                <td>{{ a.title }}</td>
+                <td>
+                    {% if a.style == 'news' %}
+                        <span class="badge badge-news">新闻资讯</span>
+                    {% elif a.style == 'comment' %}
+                        <span class="badge badge-comment">评论观点</span>
+                    {% elif a.style == 'entertainment' %}
+                        <span class="badge badge-entertainment">娱乐八卦</span>
+                    {% else %}
+                        <span class="badge">{{ a.style }}</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if a.status == 'draft' %}
+                        <span class="badge badge-draft">待发布</span>
+                    {% elif a.status == 'published' %}
+                        <span class="badge badge-published">已发布</span>
+                    {% else %}
+                        <span class="badge">{{ a.status }}</span>
+                    {% endif %}
+                </td>
+                <td>{{ a.generated_at[:16] }}</td>
+                <td><a href="/article/{{ a.id }}" class="btn btn-sm btn-primary">查看</a></td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5" style="text-align:center; color:#888;">暂无文章，点击"执行流水线"开始生成</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

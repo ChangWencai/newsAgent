@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}热点榜 - NewsAgent{% endblock %}
+
+{% block content %}
+<div class="panel">
+    <div class="panel-header">
+        <h2>热点话题 (最新 50 条)</h2>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>标题</th>
+                <th>热度</th>
+                <th>分类</th>
+                <th>抓取时间</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for t in topics %}
+            <tr>
+                <td>{{ loop.revindex }}</td>
+                <td>
+                    {% if t.url %}
+                        <a href="{{ t.url }}" target="_blank" style="color:#1a73e8; text-decoration:none;">{{ t.title }}</a>
+                    {% else %}
+                        {{ t.title }}
+                    {% endif %}
+                </td>
+                <td class="hot-value">{{ t.hot_value or '-' }}</td>
+                <td>{{ t.category or '-' }}</td>
+                <td>{{ t.fetched_at[:16] }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5" style="text-align:center; color:#888;">暂无热点数据</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
