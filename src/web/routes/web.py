@@ -1,7 +1,7 @@
 """Web 视图路由（仪表盘、热点、文章、设置）"""
 
 import logging
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, session, redirect, url_for
 from config.settings import (
     TOPHUB_BASE_URL,
     TOPHUB_API_KEY,
@@ -10,6 +10,7 @@ from config.settings import (
     MAX_TOPICS_PER_RUN,
     DB_PATH,
     RSS_BASE_URL,
+    ADMIN_PASSWORD,
 )
 
 logger = logging.getLogger(__name__)
@@ -18,6 +19,29 @@ logger = logging.getLogger(__name__)
 def create_web_bp(db):
     """创建 Web 视图 Blueprint，通过闭包注入 db"""
     bp = Blueprint("web", __name__)
+
+    @bp.before_request
+    def require_auth():
+        if request.endpoint in ("web.login", "web.static", None):
+            return None
+        if not session.get("authenticated"):
+            return redirect(url_for("web.login"))
+
+    @bp.route("/login", methods=["GET", "POST"])
+    def login():
+        if request.method == "GET":
+            return render_template("login.html", error=None)
+
+        password = request.form.get("password", "")
+        if password == ADMIN_PASSWORD:
+            session["authenticated"] = True
+            return redirect(url_for("web.dashboard"))
+        return render_template("login.html", error="密码错误"), 401
+
+    @bp.route("/logout")
+    def logout():
+        session.pop("authenticated", None)
+        return redirect(url_for("web.login"))
 
     @bp.route("/")
     def dashboard():

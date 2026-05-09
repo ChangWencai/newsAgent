@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}NewsAgent{% endblock %}</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; background: #f5f7fa; color: #333; }
+        nav { background: #1a1a2e; color: #fff; padding: 0 24px; display: flex; align-items: center; height: 56px; }
+        nav .brand { font-size: 18px; font-weight: 700; margin-right: 40px; }
+        nav a { color: #ccc; text-decoration: none; margin-right: 24px; font-size: 14px; padding: 16px 0; border-bottom: 2px solid transparent; }
+        nav a:hover, nav a.active { color: #fff; border-bottom-color: #4fc3f7; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 24px; }
+        .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+        .card { background: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+        .card .num { font-size: 28px; font-weight: 700; color: #1a1a2e; }
+        .card .label { font-size: 13px; color: #888; margin-top: 4px; }
+        .panel { background: #fff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,.08); overflow: hidden; }
+        .panel-header { padding: 16px 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+        .panel-header h2 { font-size: 16px; font-weight: 600; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px 20px; text-align: left; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
+        th { background: #fafafa; color: #666; font-weight: 500; }
+        tr:hover td { background: #f8f9ff; }
+        .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 12px; }
+        .badge-draft { background: #fff3e0; color: #e65100; }
+        .badge-published { background: #e8f5e9; color: #2e7d32; }
+        .badge-news { background: #e3f2fd; color: #1565c0; }
+        .badge-comment { background: #f3e5f5; color: #7b1fa2; }
+        .badge-entertainment { background: #fce4ec; color: #c62828; }
+        .btn { display: inline-block; padding: 8px 16px; border-radius: 6px; font-size: 13px; cursor: pointer; border: none; text-decoration: none; }
+        .btn-primary { background: #1a73e8; color: #fff; }
+        .btn-primary:hover { background: #1557b0; }
+        .btn-success { background: #2e7d32; color: #fff; }
+        .btn-success:hover { background: #1b5e20; }
+        .btn-danger { background: #c62828; color: #fff; }
+        .btn-danger:hover { background: #b71c1c; }
+        .btn-sm { padding: 4px 10px; font-size: 12px; }
+        .hot-value { color: #e65100; font-weight: 600; }
+        .article-content { background: #fff; border-radius: 8px; padding: 32px; box-shadow: 0 1px 3px rgba(0,0,0,.08); line-height: 1.8; }
+        .article-content h1 { font-size: 22px; margin-bottom: 16px; }
+        .article-content .meta { color: #888; font-size: 13px; margin-bottom: 20px; }
+        .article-content p { margin-bottom: 12px; }
+        .toast { position: fixed; top: 20px; right: 20px; padding: 12px 20px; border-radius: 6px; color: #fff; font-size: 14px; z-index: 999; display: none; }
+        .toast-success { background: #2e7d32; }
+        .toast-error { background: #c62828; }
+        .actions { margin-bottom: 16px; display: flex; gap: 8px; }
+    </style>
+</head>
+<body>
+    <nav>
+        <span class="brand">NewsAgent</span>
+        <a href="/" class="{% if request.path == '/' %}active{% endif %}">仪表盘</a>
+        <a href="/topics" class="{% if request.path == '/topics' %}active{% endif %}">热点榜</a>
+        <a href="/articles" class="{% if '/articles' in request.path %}active{% endif %}">文章管理</a>
+        <a href="/rss" target="_blank">RSS</a>
+        <a href="/settings" class="{% if request.path == '/settings' %}active{% endif %}">设置</a>
+        <span style="flex:1"></span>
+        <form method="GET" action="/logout" style="margin:0">
+            <button type="submit" style="background:none;border:none;color:#ccc;cursor:pointer;font-size:14px;padding:16px 0">登出</button>
+        </form>
+    </nav>
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+    <div id="toast" class="toast"></div>
+    <script>
+        function showToast(msg, type='success') {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.className = 'toast toast-' + type;
+            t.style.display = 'block';
+            setTimeout(() => t.style.display = 'none', 3000);
+        }
+        async function runPipeline() {
+            const btn = document.getElementById('runBtn');
+            btn.disabled = true; btn.textContent = '执行中...';
+            try {
+                const res = await fetch('/api/run-pipeline', {method: 'POST'});
+                const data = await res.json();
+                showToast(data.message, data.success ? 'success' : 'error');
+                if (data.success) setTimeout(() => location.reload(), 1500);
+            } catch(e) { showToast('请求失败', 'error'); }
+            btn.disabled = false; btn.textContent = '执行流水线';
+        }
+    </script>
+</body>
+</html>

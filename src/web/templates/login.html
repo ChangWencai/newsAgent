@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录 - NewsAgent</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; background: #f5f7fa; color: #333; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .login-card { background: #fff; border-radius: 8px; padding: 40px; box-shadow: 0 2px 8px rgba(0,0,0,.1); width: 100%; max-width: 380px; }
+        .login-card h1 { font-size: 22px; font-weight: 700; color: #1a1a2e; margin-bottom: 8px; }
+        .login-card p { color: #888; font-size: 14px; margin-bottom: 24px; }
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 500; color: #555; margin-bottom: 6px; }
+        .form-group input { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; outline: none; transition: border-color .2s; }
+        .form-group input:focus { border-color: #1a73e8; }
+        .btn-login { width: 100%; padding: 10px; background: #1a73e8; color: #fff; border: none; border-radius: 6px; font-size: 14px; cursor: pointer; }
+        .btn-login:hover { background: #1557b0; }
+        .error { background: #fce4ec; color: #c62828; padding: 10px 12px; border-radius: 6px; font-size: 13px; margin-bottom: 16px; }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <h1>NewsAgent</h1>
+        <p>请输入管理密码登录</p>
+        {% if error %}
+        <div class="error">{{ error }}</div>
+        {% endif %}
+        <form method="POST" action="/login">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="form-group">
+                <label for="password">密码</label>
+                <input type="password" id="password" name="password" placeholder="请输入管理密码" required autofocus>
+            </div>
+            <button type="submit" class="btn-login">登录</button>
+        </form>
+    </div>
+</body>
+</html>

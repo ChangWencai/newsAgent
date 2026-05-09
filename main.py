@@ -3,13 +3,18 @@
 import argparse
 import atexit
 import logging
+import os
+import secrets
 import signal
 import sys
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask import Flask
+from flask_wtf.csrf import CSRFProtect
 from config.settings import RSS_HOST, RSS_PORT, DB_PATH
 from src.storage.database import Database
 from src.scheduler.jobs import run_pipeline
+
+csrf = CSRFProtect()
 
 logging.basicConfig(
     level=logging.INFO,
@@ -29,6 +34,7 @@ def create_app(db=None, db_path=None):
         template_folder="src/web/templates",
         static_folder="src/web/static",
     )
+    app.secret_key = os.environ.get("SECRET_KEY", secrets.token_hex(32))
 
     if db is None:
         db = Database(db_path or DB_PATH)
@@ -36,7 +42,11 @@ def create_app(db=None, db_path=None):
     from src.web.routes import create_web_bp, create_api_bp
 
     app.register_blueprint(create_web_bp(db))
-    app.register_blueprint(create_api_bp(db))
+    api_bp = create_api_bp(db)
+    app.register_blueprint(api_bp)
+
+    csrf.init_app(app)
+    csrf.exempt(api_bp)
 
     return app
 
