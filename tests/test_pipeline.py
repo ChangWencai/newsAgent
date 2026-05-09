@@ -4,6 +4,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from src.scheduler.jobs import create_pipeline
+from src.validator.sensitive import SensitiveWordFilter
 
 
 @pytest.fixture
@@ -108,3 +109,43 @@ class TestCreatePipeline:
 
         mock_crawler.get_hot_list.assert_not_called()
         mock_writer.generate_article.assert_not_called()
+
+    def test_pipeline_flags_sensitive_articles(self, mock_crawler, mock_writer, db):
+        """含敏感词的文章被标记为 flagged 且不进入发布流程"""
+        mock_crawler.get_hot_list.return_value = [
+            {"title": "敏感热点", "url": "http://1", "hot_value": "100", "category": "测试"},
+        ]
+        mock_writer.generate_article.return_value = {
+            "title": "敏感文章",
+            "content": "这篇文章涉及赌博和色情内容",
+            "summary": "摘要",
+            "style": "news",
+        }
+
+        # 使用项目默认词库，包含"赌博"和"色情"
+        pipeline = create_pipeline(mock_crawler, mock_writer, db)
+        pipeline()
+
+        # 文章应入库但状态为 flagged
+        articles = db.get_articles()
+        assert len(articles) == 1
+        assert articles[0]["status"] == "flagged"
+
+    def test_pipeline_normal_article_stays_draft(self, mock_crawler, mock_writer, db):
+        """不含敏感词的文章保持 draft 状态"""
+        mock_crawler.get_hot_list.return_value = [
+            {"title": "正常热点", "url": "http://1", "hot_value": "100", "category": "科技"},
+        ]
+        mock_writer.generate_article.return_value = {
+            "title": "正常科技文章",
+            "content": "人工智能在医疗领域取得重大进展",
+            "summary": "摘要",
+            "style": "news",
+        }
+
+        pipeline = create_pipeline(mock_crawler, mock_writer, db)
+        pipeline()
+
+        articles = db.get_articles()
+        assert len(articles) == 1
+        assert articles[0]["status"] == "draft"

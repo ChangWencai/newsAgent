@@ -100,6 +100,11 @@ class Database:
         ).fetchall()
         return [dict(row) for row in rows]
 
+    def update_article_status(self, article_id, status):
+        self._execute_write(
+            "UPDATE articles SET status=? WHERE id=?", (status, article_id)
+        )
+
     def mark_published(self, article_id):
         now = datetime.now().isoformat()
         self._execute_write(
