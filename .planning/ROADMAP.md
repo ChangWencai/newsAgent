@@ -60,7 +60,7 @@ Plans:
 Plans:
 - [ ] 02-01-PLAN.md — API 密钥启动验证 + Web UI 认证 + CSRF 保护（SAFE-04, SAFE-05）
 - [x] 02-02-PLAN.md — 爬虫和 AI API 指数退避重试机制（SAFE-08）
-- [ ] 02-03-PLAN.md — Database 频率控制 + cookie 状态管理 + /health 扩展（SAFE-02, SAFE-03）
+- [x] 02-03-PLAN.md — Database 频率控制 + cookie 状态管理 + /health 扩展（SAFE-02, SAFE-03）
 - [ ] 02-04-PLAN.md — DFA 敏感词过滤模块 + pipeline 集成（SAFE-06）
 - [ ] 02-05-PLAN.md — Playwright 反检测 + 语义定位器迁移（SAFE-01, SAFE-07）
 

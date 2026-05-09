@@ -10,16 +10,16 @@
 
 ```
 Phase: 2 of 5 (Safety)
-Plan:  2 of 5 (重试机制) — COMPLETE
-Status: 1/5 Phase 2 plans complete
-Progress: [████░░░░░░░░░░░░░░░░] 30% (Phase 1 complete, Phase 2 1/5)
+Plan:  3 of 5 (频率控制 + Cookie 监控) — COMPLETE
+Status: 2/5 Phase 2 plans complete
+Progress: [█████░░░░░░░░░░░░░░░] 35% (Phase 1 complete, Phase 2 2/5)
 ```
 
 ## Performance Metrics
 
-- Requirements completed: 5 / 33 (FOUND-01, FOUND-03, FOUND-05, FOUND-06, SAFE-08)
+- Requirements completed: 7 / 33 (FOUND-01, FOUND-03, FOUND-05, FOUND-06, SAFE-02, SAFE-03, SAFE-08)
 - Phases completed: 1 / 5 (Foundation)
-- Test coverage: 45 tests passing (smoke 3 + database 17 + routes 15 + pipeline 5 + retry 5)
+- Test coverage: 66 tests passing (smoke 3 + database 32 + routes 19 + pipeline 6 + retry 5 + auth 1)
 - Last deployment: N/A
 
 ## Accumulated Context
@@ -32,6 +32,8 @@ Progress: [████░░░░░░░░░░░░░░░░] 30% (Ph
 | DailyHotApi Docker 部署 | 避免爬虫 IP 封禁，覆盖 45+ 平台 |
 | MiniMax + DeepSeek 双模型 | 国内访问稳定，fallback 防单点故障 |
 | SQLite WAL 模式 | 解决并发写入死锁，单用户场景够用 |
+| can_publish() 自动跳过而非报错 | 避免频率超限时 pipeline 异常退出 |
+| cookie banner 仅 expired 触发 | missing 状态不报错，避免首次启动误报警 |
 
 ### Known Issues
 
@@ -59,18 +61,19 @@ Progress: [████░░░░░░░░░░░░░░░░] 30% (Ph
 - **Phase 2 context gathered**: 2026-05-09 — 22 个实现决策已确定（频率、Cookie、密钥、认证、CSRF、敏感词、重试、选择器）
 - **Phase 2 planned**: 2026-05-09 — 5 个计划（4 waves），需求覆盖 8/8，验证通过（修复 3 个 blocker）
 - **Phase 2 plan 02 completed**: 2026-05-09 — tenacity 指数退避重试机制，5 个测试通过，SAFE-08 完成
-- **Next action**: 执行 Phase 2 剩余计划（02-01, 02-03, 02-04, 02-05）
+- **Phase 2 plan 03 completed**: 2026-05-09 — 发布频率控制 + cookie 状态监控，21 个新测试通过，SAFE-02 + SAFE-03 完成
+- **Next action**: 执行 Phase 2 剩余计划（02-01, 02-04, 02-05）
 
 ## Phase Summary
 
 | Phase | Goal | Requirements | Status |
 |-------|------|-------------|--------|
 | 1. Foundation | 消除全局状态，建立分层架构 | FOUND-01~06 | Ready to execute |
-| 2. Safety | 安全加固与发布策略 | SAFE-01~08 | 1/5 complete |
+| 2. Safety | 安全加固与发布策略 | SAFE-01~08 | 2/5 complete |
 | 3. Multi-Source | 多平台热点聚合 | MULTI-01~09 | Not started |
 | 4. Intelligence | 智能内容生成 | INTEL-01~05 | Not started |
 | 5. Production | 容器化与 CI/CD | PROD-01~05 | Not started |
 
 ---
 
-*Last updated: 2026-05-09 — Phase 2 plan 02 complete (SAFE-08 retry mechanism, 5 tests passing)*
+*Last updated: 2026-05-09 — Phase 2 plan 03 complete (SAFE-02 frequency control + SAFE-03 cookie monitoring, 21 new tests passing)*
