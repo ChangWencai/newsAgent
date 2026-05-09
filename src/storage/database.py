@@ -100,3 +100,57 @@ class Database:
             "UPDATE articles SET status = 'published', published_at = ? WHERE id = ?",
             (now, article_id)
         )
+
+    def get_dashboard_stats(self) -> dict:
+        topic_count = self._execute_read(
+            "SELECT COUNT(*) FROM hot_topics"
+        ).fetchone()[0]
+        article_count = self._execute_read(
+            "SELECT COUNT(*) FROM articles"
+        ).fetchone()[0]
+        draft_count = self._execute_read(
+            "SELECT COUNT(*) FROM articles WHERE status='draft'"
+        ).fetchone()[0]
+        published_count = self._execute_read(
+            "SELECT COUNT(*) FROM articles WHERE status='published'"
+        ).fetchone()[0]
+        recent_rows = self._execute_read(
+            "SELECT * FROM articles ORDER BY generated_at DESC LIMIT 10"
+        ).fetchall()
+        return {
+            "topic_count": topic_count,
+            "article_count": article_count,
+            "draft_count": draft_count,
+            "published_count": published_count,
+            "recent_articles": [dict(row) for row in recent_rows],
+        }
+
+    def get_topics(self, limit: int = 50) -> list[dict]:
+        rows = self._execute_read(
+            "SELECT * FROM hot_topics ORDER BY id DESC LIMIT ?", (limit,)
+        ).fetchall()
+        return [dict(row) for row in rows]
+
+    def get_articles(self, status: str = None) -> list[dict]:
+        if status in ("draft", "published"):
+            rows = self._execute_read(
+                "SELECT * FROM articles WHERE status=? ORDER BY generated_at DESC",
+                (status,)
+            ).fetchall()
+        else:
+            rows = self._execute_read(
+                "SELECT * FROM articles ORDER BY generated_at DESC"
+            ).fetchall()
+        return [dict(row) for row in rows]
+
+    def get_article(self, article_id: int) -> dict | None:
+        row = self._execute_read(
+            "SELECT * FROM articles WHERE id=?", (article_id,)
+        ).fetchone()
+        return dict(row) if row else None
+
+    def delete_article(self, article_id: int) -> bool:
+        cursor = self._execute_write(
+            "DELETE FROM articles WHERE id=?", (article_id,)
+        )
+        return cursor.rowcount > 0
