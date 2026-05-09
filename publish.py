@@ -57,7 +57,7 @@ async def login_only():
 async def publish_articles(article_ids=None):
     """发布文章"""
     db = Database(DB_PATH)
-    pub = ToutiaoPublisher()
+    pub = ToutiaoPublisher(db=db)
 
     if article_ids:
         articles = []

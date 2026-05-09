@@ -5,6 +5,8 @@ from config.settings import MAX_TOPICS_PER_RUN, DEFAULT_STYLE
 from src.crawler.tophub import DouyinCrawler
 from src.writer.generator import ArticleGenerator
 from src.storage.database import Database
+from src.publisher.toutiao_publisher import ToutiaoPublisher
+from src.validator.sensitive import check_sensitive_words
 
 logger = logging.getLogger(__name__)
 
@@ -16,6 +18,11 @@ def create_pipeline(crawler, writer, db):
         _run_pipeline_inner(crawler, writer, db)
 
     return pipeline
+
+
+def create_publisher(db: Database) -> ToutiaoPublisher:
+    """创建 publisher，注入数据库依赖"""
+    return ToutiaoPublisher(db=db)
 
 
 def _run_pipeline_inner(crawler, writer, db):
@@ -71,12 +78,22 @@ def _run_pipeline_inner(crawler, writer, db):
                 continue
 
             # 存储文章
-            db.insert_article(
+            article_id = db.insert_article(
                 topic_id=topic_id,
                 title=article["title"],
                 content=article["content"],
                 style=article["style"],
             )
+
+            # 敏感词检查
+            hits = check_sensitive_words(article["content"])
+            if hits:
+                db.update_article_status(article_id, status="flagged")
+                logger.warning(
+                    "文章含敏感词，已标记: %s, 命中: %s", article["title"], hits
+                )
+                continue
+
             logger.info("已生成文章: %s", article["title"])
 
         except Exception as e:
