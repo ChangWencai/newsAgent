@@ -76,7 +76,14 @@ Plans:
 4. 同一热点事件在不同平台被识别为重复，流水线自动去重并从不同角度生成差异化文章
 5. 调度流水线遍历所有已注册爬虫，自动完成多源抓取，用户无需手动指定平台
 
-**Plans**: TBD
+**Plans**: 5 plans in 3 waves
+
+Plans:
+- [ ] 03-01-PLAN.md — 基础设施（HotTopic + CrawlerProtocol + Registry + DB source 列迁移）
+- [ ] 03-02-PLAN.md — DouyinCrawler 迁移到新协议 + 自动注册
+- [ ] 03-03-PLAN.md — DailyHotApi 适配器 + 配置 + Docker Compose
+- [ ] 03-04-PLAN.md — 微博/知乎/百度平台适配器
+- [ ] 03-05-PLAN.md — 跨平台去重 + 多源 pipeline 调度
 
 ### Phase 4: Intelligence
 **Goal**: AI 生成内容质量提升，风格更匹配，热点覆盖更全面
@@ -114,7 +121,7 @@ Plans:
 |-------|----------------|--------|-----------|
 | 1. Foundation | 5/5 | Done | 2026-05-09 |
 | 2. Safety | 1/5 | In Progress | - |
-| 3. Multi-Source | 0/9 | Not started | - |
+| 3. Multi-Source | 0/5 | Ready to Execute | - |
 | 4. Intelligence | 0/5 | Not started | - |
 | 5. Production | 0/5 | Not started | - |
 
@@ -138,15 +145,15 @@ Plans:
 | SAFE-06 | Phase 2 | Planned (02-04) |
 | SAFE-07 | Phase 2 | Planned (02-05) |
 | SAFE-08 | Phase 2 | Done (02-02) |
-| MULTI-01 | Phase 3 | Pending |
-| MULTI-02 | Phase 3 | Pending |
-| MULTI-03 | Phase 3 | Pending |
-| MULTI-04 | Phase 3 | Pending |
-| MULTI-05 | Phase 3 | Pending |
-| MULTI-06 | Phase 3 | Pending |
-| MULTI-07 | Phase 3 | Pending |
-| MULTI-08 | Phase 3 | Pending |
-| MULTI-09 | Phase 3 | Pending |
+| MULTI-01 | Phase 3 | Planned (03-01) |
+| MULTI-02 | Phase 3 | Planned (03-01) |
+| MULTI-03 | Phase 3 | Planned (03-01) |
+| MULTI-04 | Phase 3 | Planned (03-03) |
+| MULTI-05 | Phase 3 | Planned (03-04) |
+| MULTI-06 | Phase 3 | Planned (03-04) |
+| MULTI-07 | Phase 3 | Planned (03-04) |
+| MULTI-08 | Phase 3 | Planned (03-01, 03-05) |
+| MULTI-09 | Phase 3 | Planned (03-05) |
 | INTEL-01 | Phase 4 | Pending |
 | INTEL-02 | Phase 4 | Pending |
 | INTEL-03 | Phase 4 | Pending |
@@ -174,4 +181,4 @@ Phase 1 (Foundation)    — 无依赖，立即开始
 
 ---
 
-*Next command: `/gsd-execute-phase 02-safety`*
+*Next command: `/gsd-execute-phase 03-multi-source`*
