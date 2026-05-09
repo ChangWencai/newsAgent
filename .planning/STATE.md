@@ -10,16 +10,16 @@
 
 ```
 Phase: 1 of 5 (Foundation)
-Plan:  1 of 5 (测试基础设施) — DONE
+Plan:  3 of 5 (Application Factory + Blueprint 拆分) — DONE
 Status: Executing
-Progress: [█░░░░░░░░░░░░░░░░░░░] 5% (1/33 requirements)
+Progress: [██░░░░░░░░░░░░░░░░░░] 9% (3/33 requirements)
 ```
 
 ## Performance Metrics
 
-- Requirements completed: 1 / 33 (FOUND-05)
+- Requirements completed: 3 / 33 (FOUND-01, FOUND-03, FOUND-05)
 - Phases completed: 0 / 5
-- Test coverage: baseline established (3 smoke tests passing)
+- Test coverage: 35 tests passing (smoke 3 + database 17 + routes 15)
 - Last deployment: N/A
 
 ## Accumulated Context
@@ -36,9 +36,9 @@ Progress: [█░░░░░░░░░░░░░░░░░░░] 5% (1/3
 ### Known Issues
 
 - `.env` 中存储真实 API 密钥，需迁移到环境变量管理
-- 模块级全局 `_db` 变量导致测试困难
-- 路由层直接执行 SQL，违反分层架构
-- 零测试覆盖，无 CI/CD
+- ~~模块级全局 `_db` 变量导致测试困难~~ → 已解决（01-03：Blueprint 闭包注入）
+- ~~路由层直接执行 SQL，违反分层架构~~ → 已解决（01-03：零 SQL 路由层）
+- ~~零测试覆盖，无 CI/CD~~ → 部分解决（35 个测试通过，待 CI/CD）
 - 使用 Werkzeug 开发服务器运行在生产环境
 - `styles.py:70` 大小写匹配 bug
 
@@ -66,4 +66,4 @@ Progress: [█░░░░░░░░░░░░░░░░░░░] 5% (1/3
 
 ---
 
-*Last updated: 2026-05-09 — Roadmap initialization*
+*Last updated: 2026-05-09 — Plan 01-03 completed*
