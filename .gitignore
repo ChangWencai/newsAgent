@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+.env
+data/*
+!data/sensitive_words.txt
+*.db
