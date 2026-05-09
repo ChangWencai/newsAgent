@@ -55,6 +55,12 @@ class Database:
 
             CREATE INDEX IF NOT EXISTS idx_topics_title ON hot_topics(title);
             CREATE INDEX IF NOT EXISTS idx_articles_status ON articles(status);
+
+            CREATE TABLE IF NOT EXISTS system_kv (
+                key TEXT PRIMARY KEY,
+                value TEXT NOT NULL,
+                updated_at TEXT NOT NULL
+            );
         """)
         self._conn.commit()
 
@@ -154,3 +160,59 @@ class Database:
             "DELETE FROM articles WHERE id=?", (article_id,)
         )
         return cursor.rowcount > 0
+
+    def can_publish(self, max_daily: int = 5, min_interval_minutes: int = 30) -> dict:
+        """检查是否允许发布，返回 {allowed, reason, next_available}"""
+        count = self.get_today_publish_count()
+        if count >= max_daily:
+            return {
+                "allowed": False,
+                "reason": f"今日已发布 {count} 篇（上限 {max_daily}）",
+                "next_available": "明天 00:00",
+            }
+        last_time = self.get_last_publish_time()
+        if last_time:
+            elapsed = (datetime.now() - last_time).total_seconds() / 60
+            if elapsed < min_interval_minutes:
+                wait = min_interval_minutes - elapsed
+                return {
+                    "allowed": False,
+                    "reason": f"距上次发布仅 {elapsed:.0f} 分钟",
+                    "next_available": f"{wait:.0f} 分钟后",
+                }
+        return {"allowed": True, "reason": "", "next_available": ""}
+
+    def get_today_publish_count(self) -> int:
+        """返回当日已发布文章数"""
+        today = datetime.now().strftime("%Y-%m-%d")
+        row = self._execute_read(
+            "SELECT COUNT(*) FROM articles WHERE status='published' AND published_at >= ?",
+            (today,),
+        ).fetchone()
+        return row[0] if row else 0
+
+    def get_last_publish_time(self) -> datetime | None:
+        """返回最近一次发布时间，无发布记录返回 None"""
+        row = self._execute_read(
+            "SELECT published_at FROM articles WHERE status='published' ORDER BY published_at DESC LIMIT 1"
+        ).fetchone()
+        if row and row[0]:
+            return datetime.fromisoformat(row[0])
+        return None
+
+    def set_cookie_status(self, status: str):
+        """写入 cookie 状态到 system_kv 表"""
+        now = datetime.now().isoformat()
+        self._execute_write(
+            "INSERT OR REPLACE INTO system_kv (key, value, updated_at) VALUES ('cookie_status', ?, ?)",
+            (status, now),
+        )
+
+    def get_cookie_status(self) -> dict:
+        """返回 cookie 状态，未设置时返回 missing"""
+        row = self._execute_read(
+            "SELECT value, updated_at FROM system_kv WHERE key = 'cookie_status'"
+        ).fetchone()
+        if row:
+            return {"status": row[0], "updated_at": row[1]}
+        return {"status": "missing", "updated_at": None}

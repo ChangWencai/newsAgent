@@ -176,3 +176,116 @@ class TestExistingMethodsCompatibility:
 
         unpublished = db.get_unpublished_articles()
         assert len(unpublished) == 0
+
+
+class TestCanPublish:
+    """验证 can_publish 频率控制逻辑"""
+
+    def test_allowed_when_no_articles(self, db: Database):
+        result = db.can_publish()
+        assert result["allowed"] is True
+        assert result["reason"] == ""
+        assert result["next_available"] == ""
+
+    def test_daily_limit_exceeded(self, db: Database):
+        topic_id = db.insert_topic("热点", "", "", "")
+        for i in range(5):
+            article_id = db.insert_article(topic_id, f"文章{i}", "内容", "news")
+            db.mark_published(article_id)
+
+        result = db.can_publish(max_daily=5)
+        assert result["allowed"] is False
+        assert "今日已发布 5 篇" in result["reason"]
+        assert "明天 00:00" in result["next_available"]
+
+    def test_daily_limit_not_exceeded(self, db: Database):
+        topic_id = db.insert_topic("热点", "", "", "")
+        for i in range(3):
+            article_id = db.insert_article(topic_id, f"文章{i}", "内容", "news")
+            db.mark_published(article_id)
+
+        result = db.can_publish(max_daily=5, min_interval_minutes=0)
+        assert result["allowed"] is True
+
+    def test_min_interval_not_met(self, db: Database):
+        topic_id = db.insert_topic("热点", "", "", "")
+        article_id = db.insert_article(topic_id, "文章", "内容", "news")
+        db.mark_published(article_id)
+
+        result = db.can_publish(min_interval_minutes=30)
+        assert result["allowed"] is False
+        assert "距上次发布仅" in result["reason"]
+        assert "分钟后" in result["next_available"]
+
+    def test_custom_limits(self, db: Database):
+        topic_id = db.insert_topic("热点", "", "", "")
+        for i in range(2):
+            article_id = db.insert_article(topic_id, f"文章{i}", "内容", "news")
+            db.mark_published(article_id)
+
+        result = db.can_publish(max_daily=10, min_interval_minutes=0)
+        assert result["allowed"] is True
+
+
+class TestTodayPublishCount:
+    """验证 get_today_publish_count"""
+
+    def test_zero_when_no_published(self, db: Database):
+        assert db.get_today_publish_count() == 0
+
+    def test_counts_only_today(self, db: Database):
+        topic_id = db.insert_topic("热点", "", "", "")
+        article_id = db.insert_article(topic_id, "文章", "内容", "news")
+        db.mark_published(article_id)
+        assert db.get_today_publish_count() == 1
+
+    def test_ignores_drafts(self, db: Database):
+        topic_id = db.insert_topic("热点", "", "", "")
+        db.insert_article(topic_id, "草稿文章", "内容", "news")
+        assert db.get_today_publish_count() == 0
+
+
+class TestLastPublishTime:
+    """验证 get_last_publish_time"""
+
+    def test_none_when_no_published(self, db: Database):
+        assert db.get_last_publish_time() is None
+
+    def test_returns_latest(self, db: Database):
+        topic_id = db.insert_topic("热点", "", "", "")
+        article_id = db.insert_article(topic_id, "文章", "内容", "news")
+        db.mark_published(article_id)
+        result = db.get_last_publish_time()
+        assert result is not None
+
+
+class TestCookieStatus:
+    """验证 cookie 状态管理"""
+
+    def test_missing_when_not_set(self, db: Database):
+        result = db.get_cookie_status()
+        assert result["status"] == "missing"
+        assert result["updated_at"] is None
+
+    def test_set_and_get_valid(self, db: Database):
+        db.set_cookie_status("valid")
+        result = db.get_cookie_status()
+        assert result["status"] == "valid"
+        assert result["updated_at"] is not None
+
+    def test_set_and_get_expired(self, db: Database):
+        db.set_cookie_status("expired")
+        result = db.get_cookie_status()
+        assert result["status"] == "expired"
+
+    def test_update_existing(self, db: Database):
+        db.set_cookie_status("valid")
+        db.set_cookie_status("expired")
+        result = db.get_cookie_status()
+        assert result["status"] == "expired"
+
+    def test_system_kv_table_exists(self, db: Database):
+        cursor = db._execute_read(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name='system_kv'"
+        )
+        assert cursor.fetchone() is not None
