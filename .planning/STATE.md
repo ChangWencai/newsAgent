@@ -10,16 +10,16 @@
 
 ```
 Phase: 1 of 5 (Foundation)
-Plan:  3 of 5 (Application Factory + Blueprint 拆分) — DONE
+Plan:  4 of 5 (Pipeline 构造函数注入) — DONE
 Status: Executing
-Progress: [██░░░░░░░░░░░░░░░░░░] 9% (3/33 requirements)
+Progress: [██░░░░░░░░░░░░░░░░░░] 12% (4/33 requirements)
 ```
 
 ## Performance Metrics
 
 - Requirements completed: 3 / 33 (FOUND-01, FOUND-03, FOUND-05)
 - Phases completed: 0 / 5
-- Test coverage: 35 tests passing (smoke 3 + database 17 + routes 15)
+- Test coverage: 40 tests passing (smoke 3 + database 17 + routes 15 + pipeline 5)
 - Last deployment: N/A
 
 ## Accumulated Context
@@ -38,7 +38,9 @@ Progress: [██░░░░░░░░░░░░░░░░░░] 9% (3/3
 - `.env` 中存储真实 API 密钥，需迁移到环境变量管理
 - ~~模块级全局 `_db` 变量导致测试困难~~ → 已解决（01-03：Blueprint 闭包注入）
 - ~~路由层直接执行 SQL，违反分层架构~~ → 已解决（01-03：零 SQL 路由层）
-- ~~零测试覆盖，无 CI/CD~~ → 部分解决（35 个测试通过，待 CI/CD）
+- ~~run_pipeline 内部硬编码实例化~~ → 已解决（01-04：构造函数注入）
+- ~~publish.py 直接 SQL 调用~~ → 已解决（01-04：使用 db.get_article）
+- ~~零测试覆盖，无 CI/CD~~ → 部分解决（40 个测试通过，待 CI/CD）
 - 使用 Werkzeug 开发服务器运行在生产环境
 - `styles.py:70` 大小写匹配 bug
 
@@ -52,7 +54,8 @@ Progress: [██░░░░░░░░░░░░░░░░░░] 9% (3/3
 - **Research completed**: 2026-05-09
 - **Phase 1 context gathered**: 2026-05-09 — 16 个实现决策已确定（DI、数据库、测试、部署）
 - **Phase 1 planned**: 2026-05-09 — 5 个计划（5 waves），需求覆盖 6/6
-- **Next action**: `/gsd-execute-phase 1` — 执行 Foundation 阶段计划（01-02: Database 重构）
+- **Phase 1 plan 04 completed**: 2026-05-09 — Pipeline 构造函数注入，40 个测试全部通过
+- **Next action**: `/gsd-execute-phase 1` — 执行 Foundation 阶段计划（01-05: gunicorn 生产部署）
 
 ## Phase Summary
 
@@ -66,4 +69,4 @@ Progress: [██░░░░░░░░░░░░░░░░░░] 9% (3/3
 
 ---
 
-*Last updated: 2026-05-09 — Plan 01-03 completed*
+*Last updated: 2026-05-09 — Plan 01-04 completed (Pipeline 构造函数注入)*

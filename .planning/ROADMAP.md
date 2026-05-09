@@ -37,9 +37,9 @@
 
 Plans:
 - [x] 01-01-PLAN.md — 测试基础设施（pytest + conftest.py + smoke test）
-- [ ] 01-02-PLAN.md — Database 重构（单连接 + Lock + WAL + 补齐 5 个方法）
-- [ ] 01-03-PLAN.md — Application Factory + Blueprint 拆分（create_app + web_bp + api_bp）
-- [ ] 01-04-PLAN.md — Pipeline 构造函数注入（create_pipeline + publish.py 适配）
+- [x] 01-02-PLAN.md — Database 重构（单连接 + Lock + WAL + 补齐 5 个方法）
+- [x] 01-03-PLAN.md — Application Factory + Blueprint 拆分（create_app + web_bp + api_bp）
+- [x] 01-04-PLAN.md — Pipeline 构造函数注入（create_pipeline + publish.py 适配）
 - [ ] 01-05-PLAN.md — gunicorn 部署（gunicorn.conf.py + 信号处理 + 双模式兼容）
 
 ### Phase 2: Safety
@@ -105,7 +105,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 1/5 | Executing | - |
+| 1. Foundation | 4/5 | Executing | - |
 | 2. Safety | 0/8 | Not started | - |
 | 3. Multi-Source | 0/9 | Not started | - |
 | 4. Intelligence | 0/5 | Not started | - |
@@ -117,9 +117,9 @@ Plans:
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| FOUND-01 | Phase 1 | Pending |
+| FOUND-01 | Phase 1 | Done (01-04) |
 | FOUND-02 | Phase 1 | Pending |
-| FOUND-03 | Phase 1 | Pending |
+| FOUND-03 | Phase 1 | Done (01-03) |
 | FOUND-04 | Phase 1 | Pending |
 | FOUND-05 | Phase 1 | Done (01-01) |
 | FOUND-06 | Phase 1 | Pending |
